@@ -2,46 +2,46 @@
 
 /**
  * add_key - create a new environment variable
- * @vars: pointer to struct of variables
+ * @shell_vars: pointer to struct of variables
  *
  * Return: void
  */
-void add_key(vars_t *vars)
+void add_key(vars_t *shell_vars)
 {
 	unsigned int i;
 	char **newenv;
 
-	for (i = 0; vars->env[i] != NULL; i++)
+	for (i = 0; shell_vars->env[i] != NULL; i++)
 		;
 	newenv = malloc(sizeof(char *) * (i + 2));
 	if (newenv == NULL)
 	{
-		print_error(vars, NULL);
-		vars->status = 127;
-		new_exit(vars);
+		print_error(shell_vars, NULL);
+		shell_vars->status = 127;
+		new_exit(shell_vars);
 	}
-	for (i = 0; vars->env[i] != NULL; i++)
-		newenv[i] = vars->env[i];
-	newenv[i] = add_value(vars->av[1], vars->av[2]);
+	for (i = 0; shell_vars->env[i] != NULL; i++)
+		newenv[i] = shell_vars->env[i];
+	newenv[i] = add_value(shell_vars->av[1], shell_vars->av[2]);
 	if (newenv[i] == NULL)
 	{
-		print_error(vars, NULL);
-		free(vars->buffer);
-		free(vars->commands);
-		free(vars->av);
-		free_env(vars->env);
+		print_error(shell_vars, NULL);
+		free(shell_vars->buffer);
+		free(shell_vars->commands);
+		free(shell_vars->av);
+		free_env(shell_vars->env);
 		free(newenv);
 		exit(127);
 	}
 	newenv[i + 1] = NULL;
-	free(vars->env);
-	vars->env = newenv;
+	free(shell_vars->env);
+	shell_vars->env = newenv;
 }
 
 /**
- * find_key - finds an environment variable
+ * find_key - function that finds an environment variable
  * @env: array of environment variables
- * @key: environment variable to find
+ * @key: environment variable
  *
  * Return: pointer to address of the environment variable
  */
@@ -62,7 +62,7 @@ char **find_key(char **env, char *key)
 }
 
 /**
- * add_value - create a new environment variable string
+ * add_value - function that create a new environment variable string
  * @key: variable name
  * @value: variable value
  *
@@ -88,8 +88,8 @@ char *add_value(char *key, char *value)
 }
 
 /**
- * _atoi - converts a string into an integer
- * @str: string to convert
+ * _atoi - function converts a string into an integer
+ * @str: the string
  *
  * Return: the integer value, or -1 if an error occurs
  */
