@@ -1,23 +1,22 @@
 #include "shell.h"
 
 /**
- * print_error - prints error messages to standard error
+ * print_error - fuction that prints error messages to standard error
  * @vars: pointer to struct of variables
- * @msg: message to print out
- *
+ * @msg: message to be printed
  * Return: void
  */
-void print_error(vars_t *vars, char *msg)
+void print_error(vars_t *shell_vars, char *msg)
 {
 	char *count;
 
-	_puts2(vars->argv[0]);
+	_puts2(shell_vars->argv[0]);
 	_puts2(": ");
-	count = _uitoa(vars->count);
+	count = _uitoa(shell_vars->count);
 	_puts2(count);
 	free(count);
 	_puts2(": ");
-	_puts2(vars->av[0]);
+	_puts2(shell_vars->av[0]);
 	if (msg)
 	{
 		_puts2(msg);
@@ -27,9 +26,8 @@ void print_error(vars_t *vars, char *msg)
 }
 
 /**
- * _puts2 - prints a string to standard error
- * @str: string to print
- *
+ * _puts2 - function that prints a string to standard error
+ * @str: string to be printed
  * Return: void
  */
 void _puts2(char *str)
@@ -47,9 +45,8 @@ void _puts2(char *str)
 }
 
 /**
- * _uitoa - converts an unsigned int to a string
- * @count: unsigned int to convert
- *
+ * _uitoa - function that converts an unsigned int to a string
+ * @count: unsigned int to be converted
  * Return: pointer to the converted string
  */
 char *_uitoa(unsigned int count)
