@@ -1,0 +1,104 @@
+-- Users table
+CREATE TABLE Users (
+  user_id INT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('admin', 'customer') NOT NULL
+);
+
+-- Products table
+CREATE TABLE Products (
+  product_id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  price DECIMAL(10, 2) NOT NULL,
+  quantity INT NOT NULL,
+  category_id INT,
+  FOREIGN KEY (category_id) REFERENCES Categories(category_id)
+);
+
+-- Categories table
+CREATE TABLE Categories (
+  category_id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL
+);
+
+-- Orders table
+CREATE TABLE Orders (
+  order_id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT,
+  order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  total_amount DECIMAL(10, 2) NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- Order Items table
+CREATE TABLE OrderItems (
+  order_item_id INT PRIMARY KEY AUTO_INCREMENT,
+  order_id INT,
+  product_id INT,
+  quantity INT NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+  FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+-- Addresses table
+CREATE TABLE Addresses (
+  address_id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT,
+  street VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL,
+  state VARCHAR(255) NOT NULL,
+  postal_code VARCHAR(10) NOT NULL,
+  country VARCHAR(255) NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- PaymentMethods table
+CREATE TABLE PaymentMethods (
+  payment_method_id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT,
+  card_number VARCHAR(16) NOT NULL,
+  cardholder_name VARCHAR(255) NOT NULL,
+  expiration_date DATE NOT NULL,
+  cvv VARCHAR(3) NOT NULL,
+  billing_address_id INT,
+  FOREIGN KEY (user_id) REFERENCES Users(user_id),
+  FOREIGN KEY (billing_address_id) REFERENCES Addresses(address_id)
+);
+
+-- ShippingAddresses table
+CREATE TABLE ShippingAddresses (
+  shipping_address_id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT,
+  street VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL,
+  state VARCHAR(255) NOT NULL,
+  postal_code VARCHAR(10) NOT NULL,
+  country VARCHAR(255) NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- OrderShipping table
+CREATE TABLE OrderShipping (
+  order_shipping_id INT PRIMARY KEY AUTO_INCREMENT,
+  order_id INT,
+  shipping_address_id INT,
+  shipping_date DATE,
+  delivery_date DATE,
+  FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+  FOREIGN KEY (shipping_address_id) REFERENCES ShippingAddresses(shipping_address_id)
+);
+
+-- OrderPayments table
+CREATE TABLE OrderPayments (
+  order_payment_id INT PRIMARY KEY AUTO_INCREMENT,
+  order_id INT,
+  payment_method_id INT,
+  payment_date DATE,
+  amount DECIMAL(10, 2) NOT NULL,
+  FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+  FOREIGN KEY (payment_method_id) REFERENCES PaymentMethods(payment_method_id)
+);
