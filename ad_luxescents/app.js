@@ -1,52 +1,57 @@
 const express = require('express');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const authJwt = require('./helpers/jwt');
+
+//const Product = require('./models/product');
+
+// Load environment variables
+dotenv.config();
+
+//pp.use(cors());
+//app.options('*', cors())
+
+
+// Create Express app
 const app = express();
 const port = 3000;
-const mongoose = require('mongoose');
 
-// Middleware to parse JSON in the request body
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(morgan('tiny'));
+// Middleware Configuration
+app.use(express.json()); // Parse JSON in the request body
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
+app.use(morgan('tiny')); // Logging middleware
+app.use(authJwt());
 
-require('dotenv/config');
+// Routes
+const productsRouter = require('./routers/products');
+const categoriesRouter = require('./routers/categories');
+const usersRouter = require('./routers/users');
+//const ordersRouter = require('./routers/orders');
 
 const api = process.env.API_URL;
 
-// Product Information
-app.get(`${api}/products`, (req, res) => {
-    // Retrieve product information
-    const product = {
-        id: 1,
-        name: 'white oud',
-        image: 'have to add url for this',
-    };
-    res.send(product);
-});
-
-// Product Information
-app.post(`${api}/products`, (req, res) => {
-    // Retrieve product information
-    const newProduct = req.body;
-    console.log(newProduct);
-    res.send(newProduct);  // Sending the new product details as a response
-});
+// Mount routers
+app.use(`${api}/products`, productsRouter);
+app.use(`${api}/categories`, categoriesRouter);
+app.use(`${api}/users`, usersRouter);
+//app.use(`${api}/orders`, ordersRouter);
 
 
+// Connect to MongoDB database
 mongoose.connect(process.env.CONNECT_DB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    dbName: 'ad-scents'
-  
- })
-.then(()=>{
-    console.log('Database connection is ready...')
-})
-.catch((err)=> {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  dbName: 'ad-
+  .then(() => {
+    console.log('Database connection is ready...');
+  })
+  .catch((err) => {
     console.log(err);
-})
+  });
 
+// Start the server
 app.listen(port, () => {
-    console.log(api);
-    console.log(`Server is running on port ${port}`);
+  console.log(api);
+  console.log(`Server is running on port ${port}`);
 });
